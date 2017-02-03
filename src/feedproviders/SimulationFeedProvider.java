@@ -54,8 +54,8 @@ public class SimulationFeedProvider extends FeedProvider {
 				@Override
 				public boolean accept(File dir, String name) {
 					//return name.contains("USD") && name.endsWith(".hst");
-					//return name.contains("EURUSD") && name.endsWith(".hst");
-					return name.endsWith(".hst");
+					return name.contains("EURUSD") && name.endsWith(".hst");
+					//return name.endsWith(".hst");
 					//return !name.contains("JPY") && name.endsWith(".hst");
 				}
 			});
@@ -186,7 +186,7 @@ public class SimulationFeedProvider extends FeedProvider {
 	public void simulate() {
 		
 		log.info("Init");
-		controller.reset(symbolsMap, symbols, 10);
+		controller.reset(symbolsMap, symbols);
 		expertAdvisor.init();
 		
 		Calendar startDate = Calendar.getInstance();
@@ -196,22 +196,19 @@ public class SimulationFeedProvider extends FeedProvider {
 		startDate.set(Calendar.YEAR, 2010);
 		
 		Calendar endDate = Calendar.getInstance();
-		endDate.set(Calendar.DAY_OF_MONTH, 31);
-		endDate.set(Calendar.MONTH, Calendar.DECEMBER);
-		endDate.set(Calendar.YEAR, 2016);
 		
 		for (int i = 0; i < memoryTime.length; i++) {
 			
-			if (memoryTime[i] < startDate.getTimeInMillis()) {
-				continue;
-			}
-			else if (memoryTime[i] > endDate.getTimeInMillis()) {
+			if (memoryTime[i] > endDate.getTimeInMillis()) {
 				break;
 			}
 			
 			controller.newBar(memorySymbol[i], memoryTime[i], memoryOpen[i], memoryLow[i], memoryHigh[i], memoryClose[i], memoryVolume[i]);
-			expertAdvisor.start();
-			controller.refresh();
+
+			if (memoryTime[i] >= startDate.getTimeInMillis()) {
+				expertAdvisor.start();
+				controller.refresh();
+			}
 		}
 		
 		log.info("Deinit");

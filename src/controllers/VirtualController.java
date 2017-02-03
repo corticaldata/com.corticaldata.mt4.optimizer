@@ -47,14 +47,13 @@ public class VirtualController extends Controller {
 	HashMap<String, Integer> symbolsMap;
 	String[] symbols;
 	
-	double pointMultiplier;
 	long currentTime;
 	
 	double maxEquity;
 	double maxDrawdownPercent;
 	
 	@Override
-	public void reset(HashMap<String, Integer> symbolsMap, String[] symbols, double pointMultiplier) {
+	public void reset(HashMap<String, Integer> symbolsMap, String[] symbols) {
 		
 		this.symbolsMap = symbolsMap;
 		this.symbols = symbols;
@@ -95,7 +94,6 @@ public class VirtualController extends Controller {
 		
 		symbolsMap = new HashMap<String, Integer>();
 		
-		this.pointMultiplier = pointMultiplier;
 		currentTime = 0;
 	}
 	
@@ -133,22 +131,42 @@ public class VirtualController extends Controller {
 	
 	@Override
 	public double iHigh(String symbol, int timeframe, int shift) {
-		return bars[symbolsMap.get(symbol)][timeframe].get(shift).high;
+		if (shift == 0) {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		}
+		else {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).high;
+		}
 	}
 	
 	@Override
 	public double iLow(String symbol, int timeframe, int shift) {
-		return bars[symbolsMap.get(symbol)][timeframe].get(shift).low;
+		if (shift == 0) {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		}
+		else {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).low;
+		}
 	}
 	
 	@Override
 	public double iOpen(String symbol, int timeframe, int shift) {
-		return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		if (shift == 0) {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		}
+		else {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		}
 	}
 	
 	@Override
 	public double iClose(String symbol, int timeframe, int shift) {
-		return bars[symbolsMap.get(symbol)][timeframe].get(shift).close;
+		if (shift == 0) {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).open;
+		}
+		else {
+			return bars[symbolsMap.get(symbol)][timeframe].get(shift).close;
+		}
 	}
 	
 	@Override
@@ -469,7 +487,7 @@ public class VirtualController extends Controller {
 				selectedTrade = openTrades.get(i);
 				selectedTrade.stopLoss = stopLoss;
 				selectedTrade.takeProfit = takeProfit;
-				log.info(selectedTrade.symbol + ": MODIFY (" + selectedTrade.ticket + ") " + new Date(currentTime + 60 * 1000) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
+				log.info(selectedTrade.symbol + ": MODIFY (" + selectedTrade.ticket + ") " + new Date(currentTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
 				return true;
 			}
 		}
@@ -491,7 +509,7 @@ public class VirtualController extends Controller {
 			selectedTrade.closePrice = close[symbolsMap.get(symbol)];
 		}
 		else {
-			selectedTrade.closePrice = close[symbolsMap.get(symbol)] + marketInfo(symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(symbol, ExpertAdvisor.MODE_POINT) * pointMultiplier;
+			selectedTrade.closePrice = close[symbolsMap.get(symbol)] + marketInfo(symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(symbol, ExpertAdvisor.MODE_POINT);
 		}
 		selectedTrade.openTime = currentTime;
 		selectedTrade.stopLoss = stopLoss;
@@ -505,7 +523,7 @@ public class VirtualController extends Controller {
 		
 		return selectedTrade.ticket;
 	}
-
+	
 	void calculateTimeframe(int symbol, int timeframe, long currentTime, double open, double low, double high, double close, double volume) {
 		
 		long timeframeTimeInMillis = 0;
@@ -607,12 +625,12 @@ public class VirtualController extends Controller {
 			}
 			else if (selectedTrade.type == ExpertAdvisor.OP_SELL) {
 				double sl = (selectedTrade.stopLoss == 0 || selectedTrade.stopLoss == (-1) ? 100000 : selectedTrade.stopLoss);
-				if (low[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT) * pointMultiplier <= selectedTrade.takeProfit)
+				if (low[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT) <= selectedTrade.takeProfit)
 					selectedTrade.closePrice = selectedTrade.takeProfit;
-				else if (high[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT) * pointMultiplier >= sl)
+				else if (high[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT) >= sl)
 					selectedTrade.closePrice = sl;
 				else
-					selectedTrade.closePrice = close[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT) * pointMultiplier;
+					selectedTrade.closePrice = close[symbolsMap.get(selectedTrade.symbol)] + marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_SPREAD) * marketInfo(selectedTrade.symbol, ExpertAdvisor.MODE_POINT);
 			}
 			
 			accountEquity += orderProfit() + orderSwap() + orderCommission();

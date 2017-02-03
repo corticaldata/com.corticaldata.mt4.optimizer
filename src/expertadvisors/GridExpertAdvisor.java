@@ -1,6 +1,7 @@
 package expertadvisors;
 
 import controllers.Controller;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -48,7 +49,7 @@ public class GridExpertAdvisor extends ExpertAdvisor {
 	
 	@Override
 	public int start() {
-		
+
 		if (iBars(Symbol(), PERIOD_D1) <= 1)
 			return(0);
 		

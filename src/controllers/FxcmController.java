@@ -222,7 +222,7 @@ public class FxcmController extends Controller {
 	}
 	
 	@Override
-	public void reset(HashMap<String, Integer> symbolsMap, String[] symbols, double pointMultiplier) {
+	public void reset(HashMap<String, Integer> symbolsMap, String[] symbols) {
 		// TODO Auto-generated method stub
 		
 	}

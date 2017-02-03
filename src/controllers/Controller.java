@@ -10,7 +10,7 @@ import org.apache.log4j.Logger;
 public abstract class Controller {
 	protected static Logger log = Logger.getLogger("Controller");
 	
-	public abstract void reset(HashMap<String, Integer> symbolsMap, String[] symbols, double pointMultiplier);
+	public abstract void reset(HashMap<String, Integer> symbolsMap, String[] symbols);
 	
 	public abstract void newBar(int symbol, long time, double open, double low, double high, double close, double volume);
 	
