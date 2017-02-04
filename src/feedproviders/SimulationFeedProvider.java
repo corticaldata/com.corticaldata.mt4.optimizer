@@ -54,9 +54,9 @@ public class SimulationFeedProvider extends FeedProvider {
 				@Override
 				public boolean accept(File dir, String name) {
 					//return name.contains("USD") && name.endsWith(".hst");
-					return name.contains("EURUSD") && name.endsWith(".hst");
+					//return name.contains("EURUSD") && name.endsWith(".hst");
 					//return name.endsWith(".hst");
-					//return !name.contains("JPY") && name.endsWith(".hst");
+					return name.contains("USD") && !name.contains("JPY") && name.endsWith(".hst");
 				}
 			});
 			
@@ -185,7 +185,7 @@ public class SimulationFeedProvider extends FeedProvider {
 	@Override
 	public void simulate() {
 		
-		log.info("Init");
+		//log.info("Init");
 		controller.reset(symbolsMap, symbols);
 		expertAdvisor.init();
 		
@@ -203,15 +203,16 @@ public class SimulationFeedProvider extends FeedProvider {
 				break;
 			}
 			
-			controller.newBar(memorySymbol[i], memoryTime[i], memoryOpen[i], memoryLow[i], memoryHigh[i], memoryClose[i], memoryVolume[i]);
-
 			if (memoryTime[i] >= startDate.getTimeInMillis()) {
+				controller.newBar(memorySymbol[i], memoryTime[i], memoryOpen[i], memoryLow[i], memoryHigh[i], memoryClose[i], memoryVolume[i]);
 				expertAdvisor.start();
-				controller.refresh();
+				if (!controller.refresh()) {
+					break;
+				}
 			}
 		}
 		
-		log.info("Deinit");
+		//log.info("Deinit");
 		expertAdvisor.deinit();
 	}
 }

@@ -49,8 +49,8 @@ public class VirtualController extends Controller {
 	
 	long currentTime;
 	
-	double maxEquity;
-	double maxDrawdownPercent;
+	public double maxEquity;
+	public double maxDrawdownPercent;
 	
 	@Override
 	public void reset(HashMap<String, Integer> symbolsMap, String[] symbols) {
@@ -471,9 +471,9 @@ public class VirtualController extends Controller {
 				openTrades.remove(i);
 				closedTrades.add(selectedTrade);
 				accountBalance += orderProfit() + orderSwap() + orderCommission();
-				log.info(selectedTrade.symbol + ": CLOSE (" + selectedTrade.ticket + ") " + new Date(selectedTrade.closeTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
-				log.info("Profit: " + orderProfit() + ", Balance: " + accountBalance);
-				log.info("Max. equity: " + maxEquity + ", Max. drawdown: " + maxDrawdownPercent + "%");
+				//log.info(selectedTrade.symbol + ": CLOSE (" + selectedTrade.ticket + ") " + new Date(selectedTrade.closeTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
+				//log.info("Profit: " + orderProfit() + ", Balance: " + accountBalance);
+				//log.info("Max. equity: " + maxEquity + ", Max. drawdown: " + maxDrawdownPercent + "%");
 				return true;
 			}
 		}
@@ -487,7 +487,7 @@ public class VirtualController extends Controller {
 				selectedTrade = openTrades.get(i);
 				selectedTrade.stopLoss = stopLoss;
 				selectedTrade.takeProfit = takeProfit;
-				log.info(selectedTrade.symbol + ": MODIFY (" + selectedTrade.ticket + ") " + new Date(currentTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
+				//log.info(selectedTrade.symbol + ": MODIFY (" + selectedTrade.ticket + ") " + new Date(currentTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
 				return true;
 			}
 		}
@@ -519,7 +519,7 @@ public class VirtualController extends Controller {
 		currentTicket++;
 		openTrades.add(selectedTrade);
 
-		log.info(selectedTrade.symbol + ": OPEN (" + selectedTrade.ticket + ") " + new Date(selectedTrade.openTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.openPrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
+		//log.info(selectedTrade.symbol + ": OPEN (" + selectedTrade.ticket + ") " + new Date(selectedTrade.openTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.openPrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
 		
 		return selectedTrade.ticket;
 	}
@@ -607,7 +607,7 @@ public class VirtualController extends Controller {
 	}
 	
 	@Override
-	public void refresh() {
+	public boolean refresh() {
 		accountEquity = accountBalance;
 		
 		Trade temp = selectedTrade;
@@ -640,9 +640,9 @@ public class VirtualController extends Controller {
 				openTrades.remove(i);
 				closedTrades.add(selectedTrade);
 				accountBalance += orderProfit() + orderSwap() + orderCommission();
-				log.info(selectedTrade.symbol + ": CLOSE (TP/SL) (" + selectedTrade.ticket + ") " + new Date(selectedTrade.closeTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
-				log.info("Profit: " + orderProfit() + ", Balance: " + accountBalance);
-				log.info("Max. equity: " + maxEquity + ", Max. drawdown: " + maxDrawdownPercent + "%");
+				//log.info(selectedTrade.symbol + ": CLOSE (TP/SL) (" + selectedTrade.ticket + ") " + new Date(selectedTrade.closeTime) + ": " + (selectedTrade.type == 0 ? "buy" : "sell") + ", " + selectedTrade.lots + ", " + selectedTrade.closePrice + ", " + selectedTrade.stopLoss + ", " + selectedTrade.takeProfit);
+				//log.info("Profit: " + orderProfit() + ", Balance: " + accountBalance);
+				//log.info("Max. equity: " + maxEquity + ", Max. drawdown: " + maxDrawdownPercent + "%");
 			}
 		}
 		
@@ -658,8 +658,9 @@ public class VirtualController extends Controller {
 		selectedTrade = temp;
 		
 		if (accountEquity <= 0) {
-			System.out.println("SIN PASTA!!! ;-)");
-			System.exit(0);
+			//System.out.println("SIN PASTA!!! ;-)");
+			return false;
 		}
+		return true;
 	}
 }

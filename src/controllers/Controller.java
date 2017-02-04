@@ -14,7 +14,7 @@ public abstract class Controller {
 	
 	public abstract void newBar(int symbol, long time, double open, double low, double high, double close, double volume);
 	
-	public abstract void refresh();
+	public abstract boolean refresh();
 	
 	public abstract long timeCurrent();
 	

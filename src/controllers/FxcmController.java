@@ -235,9 +235,9 @@ public class FxcmController extends Controller {
 	}
 	
 	@Override
-	public void refresh() {
+	public boolean refresh() {
 		// TODO Auto-generated method stub
-		
+		return false;
 	}
 	
 	@Override
